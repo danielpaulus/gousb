@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"runtime"
 	"sync"
 	"time"
 	"unsafe"
@@ -180,6 +181,8 @@ func (libusbImpl) init() (*libusbContext, error) {
 }
 
 func (libusbImpl) handleEvents(c *libusbContext, done <-chan struct{}) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
 	tv := C.struct_timeval{tv_usec: 100e3}
 	for {
 		select {
